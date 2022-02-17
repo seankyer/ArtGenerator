@@ -8,13 +8,23 @@
 
 class Draw {
 
-const int metaData = 18;
+    const int headerSize = 3;
+    std::string imgFilePath;
+    int imgWidth;
+    int imgHeight;
 
-public:
-    // TODO: Make width and height passing unnecesary, extract values from metadata in methods
-    void drawImage(std::string filePath, int offset, int width, int height);
-    void drawImage(std::string filePath, int width, int height);
-    void createCanvas(std::string filePath, int width, int height);
+    public:
+        Draw(std::string filepath, int width, int height);
+        
+        void drawRainbow();
+        int placePixel(int x, int y, int r, int g, int b);
+        void getPixel(int x, int y); // TODO: will need to create a pixelstruct so it can return multiple values
+
+    private:
+        void createCanvas();
+        void drawBlankImage(); // Used when creating the canvas
+        void replaceFile(std::string temp);
 };
+
 
 #endif // DRAW_H

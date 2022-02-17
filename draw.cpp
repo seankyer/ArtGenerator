@@ -10,64 +10,130 @@
 
 using namespace std;
 
-void Draw::drawImage(string fp, int offset, int width, int height) {
-    // Draw an image starting at specified offset point
-    cout << "Drawing at offset!" << endl;
-    
-    // Open file, skip metadeta ()
-    fstream img(fp);
-    img.seekg(metaData, ios::beg);
+// Constructor
+Draw::Draw(string fp, int w, int h) {
+    imgFilePath = fp;
+    imgWidth = w;
+    imgHeight = h;
+    createCanvas();
+    cout << "Created Draw object with variables:\n" << 
+        "filepath: " << imgFilePath << "\n" << 
+        "width: " << imgWidth << "\n" << 
+        "height: " << imgHeight << endl;
 
-    // Seek to specified offset, filling 0s along the way
-    for (int y = 0; y < offset; y++) {
-        img << 255 << " " << 255 << " " << 255 << endl;
+}
+
+
+// Public functions:
+int Draw::placePixel(int x, int y, int r, int g, int b) {
+    // TODO: Places pixel at specified x,y coordinates in image. Returns 1 if successful
+    // Check coordinates are inbounds
+    if (x > imgWidth || y > imgHeight || x < 0 || y < 0) {
+        cerr << "Draw::placePixel: Coordinates are out of bounds!" << endl;
+        return 0;
+    }
+    // Open two images, one in, one out
+    ifstream img(imgFilePath);
+    ofstream temp("images/temp.ppm");
+
+    string line;
+    int lineNum = 0;
+    int targetLine = (y * imgHeight) + x;
+
+    for (int x = 0; x < headerSize; x++) {
+        getline(img, line);
+        temp << line << "\n";
     }
 
-    // Draw image
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
+    while (getline(img, line)) {
+        if (lineNum == targetLine) {
+            temp << r << " " << g << " " << b << "\n";
+        } else {
+            temp << line << "\n";
+        }
+        lineNum = lineNum + 1;
+    }
 
+    temp.close();
+    img.close();
+    replaceFile("images/temp.ppm");
+    
+    return 1;
+}
+
+
+void Draw::getPixel(int x, int y){
+    // TODO: implement this
+
+}
+
+
+void Draw::drawRainbow() {
+    // Draw onto the image
+    // Open two images, one in, one out
+    ifstream img(imgFilePath);
+    ofstream temp("images/temp.ppm");
+
+    string line;
+    int lineNum = 0;
+
+    for (int x = 0; x < headerSize; x++) {
+        getline(img, line);
+        temp << line << "\n";
+    }
+
+    for (int x = 0; x < imgWidth; x++) {
+        for (int y = 0; y < imgHeight; y++) {
             int r = x % 256;
             int g = y % 256;
-            int b = y * x % 256;
+            int b = x * y % 256;
 
-            img << r << " " << g << " " << b << endl;
+            temp << r << " " << g << " " << b << "\n";
         }
     }
 
+    temp.close();
     img.close();
+    replaceFile("images/temp.ppm");
 }
 
-void Draw::drawImage(string fp, int width, int height) {
-    // Draw an image starting at end of file
 
-    cout << "Drawing at end!" << endl;
-
-    fstream img(fp);
-    img.seekg(0, ios::end);
-
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-
-            int r = x % 256;
-            int g = y % 256;
-            int b = y * x % 256;
-
-            img << r << " " << g << " " << b << endl;
-        }
-    }
-
-    img.close();
-}
-
-void Draw::createCanvas(string fp, int width, int height) {
-    
-    cout << "Creating canvas" << endl;
-    ofstream img(fp);
-
+// Private functions:
+void Draw::createCanvas() {
+    // Creates entirely white canvas of specified width x height
+    ofstream img(imgFilePath);
     img << "P3" << endl;
-    img << width << " " << height << endl;
+    img << imgWidth << " " << imgHeight << endl;
     img << "255" << endl;
-
     img.close();
+    drawBlankImage();
+}
+
+
+void Draw::drawBlankImage() {
+    // Populates canvas with all white values
+    fstream img(imgFilePath);
+    img.seekg(0, ios::end);
+    for (int y = 0; y < imgHeight; y++) {
+        for (int x = 0; x < imgWidth; x++) {
+            img << 255 << " " << 255 << " " << 255 << endl;
+        }
+    }
+    img.close();
+}
+
+
+void Draw::replaceFile(string temp) {
+    // Replace old file with updated one
+    int result;
+    result = remove(imgFilePath.c_str());
+    if (result != 0) {
+        cerr << "Error removing file" << endl;
+        exit(1);
+    }
+    result = rename(temp.c_str(), imgFilePath.c_str());
+    if (result != 0) {
+        cerr << "Error renaming file" << endl;
+        exit(1);
+    }
 }
