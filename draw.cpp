@@ -11,7 +11,7 @@
 using namespace std;
 
 // Constructor
-Draw::Draw(string fp, int w, int h) {
+Draw::Draw(const string fp, int w, int h) {
     imgFilePath = fp;
     imgWidth = w;
     imgHeight = h;
@@ -40,7 +40,7 @@ int Draw::placePixel(int x, int y, int r, int g, int b) {
     int lineNum = 0;
     int targetLine = (y * imgHeight) + x;
 
-    for (int x = 0; x < headerSize; x++) {
+    for (int j = 0; j < headerSize; j++) {
         getline(img, line);
         temp << line << "\n";
     }
@@ -75,7 +75,6 @@ void Draw::drawRainbow() {
     ofstream temp("images/temp.ppm");
 
     string line;
-    int lineNum = 0;
 
     for (int x = 0; x < headerSize; x++) {
         getline(img, line);
@@ -123,7 +122,7 @@ void Draw::drawBlankImage() {
 }
 
 
-void Draw::replaceFile(string temp) {
+void Draw::replaceFile(const string temp) {
     // Replace old file with updated one
     int result;
     result = remove(imgFilePath.c_str());
