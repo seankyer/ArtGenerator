@@ -15,6 +15,7 @@ int main() {
 
     Draw d1(f1, 10, 10); // Create the computer artist!
     d1.placePixel(5, 5, 5, 5, 5);
+    d1.placePixel(9, 9, 0, 0, 0);
     d1.placePixel(5, 1, 55, 250, 0);
     d1.placePixel(1, 5, 5, 58, 43);
     d1.placePixel(0, 0, 75, 55, 77);
@@ -26,10 +27,8 @@ int main() {
     string f2 = "images/rainbow.ppm";
     Draw d2(f2, 255, 255);
     d2.drawRainbow();
-    map<char, int> p2 = d2.getPixel(100,100);
-    cout << "R: " << p2['r'] << endl;
-    cout << "G: " << p2['g'] << endl;
-    cout << "B: " << p2['b'] << endl;
+    int result = d2.placeBox(254, 254, 1, 1, 7, 7, 7);
+    cout << result << endl;
 
     return 0;
 }

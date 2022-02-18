@@ -59,6 +59,23 @@ int Draw::placePixel(int x, int y, int r, int g, int b) {
 }
 
 
+int Draw::placeBox(int x, int y, int wLeangth, int hLeangth, int r, int g, int b) {
+    // Draw a filled in box on canvas
+    if (wLeangth <= 0 || hLeangth <= 0) {
+        cerr << "Draw::placeBox: width or height leangth must be at least 1" << endl;
+        return 0;
+    }
+    if (x + wLeangth > imgWidth || y + hLeangth > imgHeight || x < 0 || y < 0) {
+        cerr << "Draw::placeBox: Coordinates are out of bounds!" << endl;
+        return 0;
+    }
+
+
+
+    return 1;
+}
+
+
 map<char, int> Draw::getPixel(int x, int y){
     // TODO: implement this
     map<char, int> pixel;

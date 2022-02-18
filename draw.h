@@ -20,6 +20,7 @@ class Draw {
         
         void drawRainbow();
         int placePixel(int x, int y, int r, int g, int b);
+        int placeBox(int x, int y, int wLeangth, int hLeangth, int r, int g, int b);
         std::map<char,int> getPixel(int x, int y); // TODO: will need to create a pixelstruct so it can return multiple values
 
     private:
