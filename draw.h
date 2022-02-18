@@ -6,6 +6,8 @@
 #ifndef DRAW_H
 #define DRAW_H
 
+#include <map>
+
 class Draw {
 
     const int headerSize = 3;
@@ -18,7 +20,7 @@ class Draw {
         
         void drawRainbow();
         int placePixel(int x, int y, int r, int g, int b);
-        void getPixel(int x, int y); // TODO: will need to create a pixelstruct so it can return multiple values
+        std::map<char,int> getPixel(int x, int y); // TODO: will need to create a pixelstruct so it can return multiple values
 
     private:
         void createCanvas();

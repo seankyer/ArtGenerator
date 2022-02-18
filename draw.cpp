@@ -3,24 +3,21 @@
  * @author Sean Kyer (github.com/seankyer)
  */
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
+#include <map>
 #include <string>
+#include <vector>
 #include "draw.h"
 
 using namespace std;
 
 // Constructor
-Draw::Draw(const string fp, int w, int h) {
+Draw::Draw(const string fp, const int w, const int h) {
     imgFilePath = fp;
     imgWidth = w;
     imgHeight = h;
     createCanvas();
-    cout << "Created Draw object with variables:\n" << 
-        "filepath: " << imgFilePath << "\n" << 
-        "width: " << imgWidth << "\n" << 
-        "height: " << imgHeight << endl;
-
 }
 
 
@@ -62,9 +59,49 @@ int Draw::placePixel(int x, int y, int r, int g, int b) {
 }
 
 
-void Draw::getPixel(int x, int y){
+map<char, int> Draw::getPixel(int x, int y){
     // TODO: implement this
+    map<char, int> pixel;
 
+    if (x > imgWidth || y > imgHeight || x < 0 || y < 0) {
+        cerr << "Draw::getPixel: Coordinates are out of bounds!" << endl;
+        return pixel;
+    }
+
+    ifstream img(imgFilePath);
+
+    // Get to correct line
+    int targetLine = (y * imgHeight) + x + headerSize;
+    string line;
+    for (int lineNum = 0; lineNum <= targetLine; lineNum++) {
+        getline(img, line);
+    }
+
+    // Extract pixel values, destroys line variable
+    string spaceDelimiter = " ";
+    string newLineDelimiter = "\n";
+    vector<string> p;
+    int pos = 0;
+
+    pos = line.find(spaceDelimiter);
+    p.push_back(line.substr(0, pos));
+    line.erase(0, pos + spaceDelimiter.length());
+
+    pos = line.find(spaceDelimiter);
+    p.push_back(line.substr(0, pos));
+    line.erase(0, pos + spaceDelimiter.length());
+
+    pos = line.find(newLineDelimiter);
+    p.push_back(line.substr(0, pos));
+    line.erase(0, pos + newLineDelimiter.length());
+
+    // Place in dictionary and return to caller
+    pixel['r'] = stoi(p[0]);
+    pixel['g'] = stoi(p[1]);
+    pixel['b'] = stoi(p[2]);
+
+    img.close();
+    return pixel;
 }
 
 
@@ -108,7 +145,6 @@ void Draw::createCanvas() {
     drawBlankImage();
 }
 
-
 void Draw::drawBlankImage() {
     // Populates canvas with all white values
     fstream img(imgFilePath);
@@ -120,7 +156,6 @@ void Draw::drawBlankImage() {
     }
     img.close();
 }
-
 
 void Draw::replaceFile(const string temp) {
     // Replace old file with updated one
