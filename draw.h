@@ -11,11 +11,12 @@
 class Draw {
 
     const int headerSize = 3;
-    std::string imgFilePath;
-    int imgWidth;
-    int imgHeight;
 
     public:
+        std::string imgFilePath;
+        int imgWidth;
+        int imgHeight;
+        
         Draw(std::string filepath, int width, int height);
         
         void drawRainbow();
@@ -27,6 +28,7 @@ class Draw {
         void createCanvas();
         void drawBlankImage(); // Used when creating the canvas
         void replaceFile(std::string temp);
+        bool hasFileExtension(const std::string &fp);
 };
 
 

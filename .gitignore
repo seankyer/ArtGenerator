@@ -33,4 +33,5 @@
 
 # Others
 .vscode
+tests/testImages/*.ppm
 images/*.png

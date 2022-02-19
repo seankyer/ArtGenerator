@@ -13,7 +13,13 @@
 using namespace std;
 
 // Constructor
-Draw::Draw(const string fp, const int w, const int h) {
+Draw::Draw(string fp, const int w, const int h) {
+    if (w <= 0 || h <= 0) {
+        throw invalid_argument("width or height cannot be less than 1");
+    }
+    if (!hasFileExtension(fp)) {
+        fp = fp + ".ppm";
+    }
     imgFilePath = fp;
     imgWidth = w;
     imgHeight = h;
@@ -25,9 +31,11 @@ Draw::Draw(const string fp, const int w, const int h) {
 int Draw::placePixel(int x, int y, int r, int g, int b) {
     // TODO: Places pixel at specified x,y coordinates in image. Returns 1 if successful
     // Check coordinates are inbounds
-    if (x > imgWidth || y > imgHeight || x < 0 || y < 0) {
-        cerr << "Draw::placePixel: Coordinates are out of bounds!" << endl;
-        return 0;
+    if (r > 255 || g > 255 || b > 255 || r < 0 || g < 0 || b < 0) {
+        throw invalid_argument("RGB must be exclusively within 0-255");
+    }
+    if (x >= imgWidth || y >= imgHeight || x < 0 || y < 0) {
+        throw invalid_argument("Width or height is out of bounds");
     }
     // Open two images, one in, one out
     ifstream img(imgFilePath);
@@ -62,12 +70,10 @@ int Draw::placePixel(int x, int y, int r, int g, int b) {
 int Draw::placeBox(int x, int y, int wLeangth, int hLeangth, int r, int g, int b) {
     // Draw a filled in box on canvas
     if (wLeangth <= 0 || hLeangth <= 0) {
-        cerr << "Draw::placeBox: width or height leangth must be at least 1" << endl;
-        return 0;
+        throw invalid_argument("Width and height must be greater than 0");
     }
     if (x + wLeangth > imgWidth || y + hLeangth > imgHeight || x < 0 || y < 0) {
-        cerr << "Draw::placeBox: Coordinates are out of bounds!" << endl;
-        return 0;
+        throw invalid_argument("Coordinates or size is out of bounds");
     }
 
 
@@ -80,9 +86,8 @@ map<char, int> Draw::getPixel(int x, int y){
     // TODO: implement this
     map<char, int> pixel;
 
-    if (x > imgWidth || y > imgHeight || x < 0 || y < 0) {
-        cerr << "Draw::getPixel: Coordinates are out of bounds!" << endl;
-        return pixel;
+    if (x >= imgWidth || y >= imgHeight || x < 0 || y < 0) {
+        throw invalid_argument("Coordinates are out of bounds");
     }
 
     ifstream img(imgFilePath);
@@ -123,6 +128,7 @@ map<char, int> Draw::getPixel(int x, int y){
 
 
 void Draw::drawRainbow() {
+    // !!! Temp function, will likely be removed later on
     // Draw onto the image
     // Open two images, one in, one out
     ifstream img(imgFilePath);
@@ -186,5 +192,15 @@ void Draw::replaceFile(const string temp) {
     if (result != 0) {
         cerr << "Error renaming file" << endl;
         exit(1);
+    }
+}
+
+bool Draw::hasFileExtension(const string &fp) {
+    string suffix = ".ppm";
+
+    if (fp.length() >= suffix.length()) {
+        return (0 == fp.compare(fp.length() - suffix.length(), suffix.length(), suffix));
+    } else {
+        return false;
     }
 }
