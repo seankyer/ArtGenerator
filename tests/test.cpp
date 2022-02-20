@@ -6,7 +6,7 @@
 using namespace std;
 
 void testDrawConstructor() {
-    cout << "~~~ TESTING DRAW CONSTRUCTOR ~~~" << endl;
+    cout << "*** TESTING DRAW CONSTRUCTOR ***" << endl;
 
     // Test constructor, expect success
     Draw d1("tests/testImages/t1.ppm", 10, 10);
@@ -47,7 +47,7 @@ void testDrawConstructor() {
 }
 
 void testPlacePixel() {
-    cout << "~~~ TESTING PLACEPIXEL ~~~" << endl;
+    cout << "*** TESTING PLACEPIXEL ***" << endl;
     Draw d1("tests/testImages/place1.ppm", 10, 10);
 
     // Test pixel is placed and all other pixels are unneffected (default is 255)
@@ -115,13 +115,117 @@ void testPlacePixel() {
 }
 
 void testPlaceBox() {
-    cout << "~~~ TESTING PLACEBOX ~~~" << endl;
+    cout << "*** TESTING PLACEBOX ***" << endl;
     // TODO: Implement tests
-    
+    Draw pic("tests/testImages/p4.ppm", 25, 25);
+    map<char, int> pixel;
+
+    // Test box placement and color correctness
+    try {
+        int result = pic.placeBox(10, 10, 10, 10, 7, 7, 7);
+        if (result == 1) {
+            cout << "PASS: Box should return succesfully" << endl;
+        } else {
+            cout << "FAIL: No exception, but function returned with non 1" << endl;
+        }
+    } catch (exception &e) {
+        cout << "FAIL: Should not throw exception" << endl;
+    }
+
+    int result = 0;
+
+    for (int x = 0; x < pic.imgWidth; x++) {
+        for (int y = 0; y < pic.imgHeight; y++) {
+            if (x >= 10 && x < 20 && y >= 10 && y < 20) {
+                pixel = pic.getPixel(x, y);
+                if (pixel['r'] != 7 || pixel['g'] != 7 || pixel['b'] != 7) {
+                    result = 1;
+                    cout << "~~~ FAIL: Pixel at x: " << x << " y: " << y << " Should equal r: 7, g: 7, b: 7" <<
+                        " Instead equals: r: " << pixel['r'] << " g: " << pixel['g'] << " b: " << pixel['b'] << " ~~~" << endl;
+                }
+            } else {
+                pixel = pic.getPixel(x, y);
+                if (pixel['r'] != 255 || pixel['g'] != 255 || pixel['b'] != 255) {
+                    result = 1;
+                    cout << "~~~ FAIL: Pixel at x: " << x << " y: " << y << " Should equal r: 255, g: 255, b: 255" <<
+                        " Instead equals: r: " << pixel['r'] << " g: " << pixel['g'] << " b: " << pixel['b'] << " ~~~" << endl;
+                }
+            }
+        }
+    }
+
+    if (result == 0) {
+        cout << "PASS: No errors in box placement" << endl;
+    }
+
+    // Test invalid arguments:
+    try {
+        pic.placeBox(26, 1, 10, 10, 6, 6, 6);
+        cout << "FAIL: Should have thrown exception for x being out of bounds" << endl;
+    } catch (exception &e) {
+        cout << "PASS: Exception thrown for x being out of bounds" << endl;
+    }
+
+    try {
+        pic.placeBox(10, 1, 20, 10, 256, 6, 6);
+        cout << "FAIL: Should have thrown exception for RGB being out of range" << endl;
+    } catch (exception &e) {
+        cout << "PASS: Exception thrown for RGB being out of range" << endl;
+    }
+
+    try {
+        pic.placeBox(10, -1, 20, 10, 256, 6, 6);
+        cout << "FAIL: Should have thrown exception for Y being negative" << endl;
+    } catch (exception &e) {
+        cout << "PASS: Exception thrown for Y being negative" << endl;
+    }
+
+    try {
+        pic.placeBox(10, 1, 0, 0, 256, 6, 6);
+        cout << "FAIL: Should have thrown exception for leangth being less than 1" << endl;
+    } catch (exception &e) {
+        cout << "PASS: Exception thrown for leangth being less than 1" << endl;
+    }
+
+    // Tests around corner cases of box edges
+    try {
+        pic.placeBox(10, 1, 20, 10, 6, 6, 6);
+        cout << "FAIL: Should have thrown exception for x leangth being out of bounds" << endl;
+    } catch (exception &e) {
+        cout << "PASS: Exception thrown for x leangth being out of bounds" << endl;
+    }
+
+    try {
+        pic.placeBox(25, 25, 1, 1, 6, 6, 6);
+        cout << "FAIL: Should have thrown exception for x/y + leangth being out of bounds" << endl;
+    } catch (exception &e) {
+        cout << "PASS: Exception thrown for x/y + leangth being out of bounds" << endl;
+    }
+
+    try {
+        pic.placeBox(24, 24, 1, 1, 6, 6, 6);
+        cout << "PASS: No exception thrown for x/y + leangth being in bounds" << endl;
+    } catch (exception &e) {
+        cout << "FAIL: No exception thrown for x/y + leangth being in bounds" << endl;
+    }
+
+    try {
+        pic.placeBox(0, 0, 25, 25, 6, 6, 6);
+        cout << "PASS: No exception thrown for x/y + leangth being in bounds" << endl;
+    } catch (exception &e) {
+        cout << "FAIL: No exception thrown for x/y + leangth being in bounds" << endl;
+    }
+
+    try {
+        pic.placeBox(0, 0, 26, 26, 6, 6, 6);
+        cout << "FAIL: Exception should be thrown for x/y + leangth being out of bounds" << endl;
+    } catch (exception &e) {
+        cout << "PASS: Exception should be thrown for x/y + leangth being out of bounds" << endl;
+    }
 }
 
 void testGetPixel() {
-    cout << "~~~ TESTING GETPIXEL ~~~" << endl;
+    cout << "*** TESTING GETPIXEL ***" << endl;
     map<char, int> pixel;
     Draw draw("tests/testImages/p3.ppm", 10, 10);
 
