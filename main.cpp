@@ -20,7 +20,7 @@ int main() {
     cout << "G: " << p1['g'] << endl;
     cout << "B: " << p1['b'] << endl;
 
-    // Box development
+    // Boxes
     string f2 = "images/rainbow.ppm";
     Draw d2(f2, 255, 255);
     d2.drawRainbow();
